@@ -1,0 +1,39 @@
+/* ===== ESTILOS RESPONSIVE MEJORADOS ===== */
+
+/* .App {
+  min-height: 100vh;
+  /* display: flex; */
+  /* flex-direction: column; */
+/* }   */
+
+/* ELIMINAR O COMENTAR ESTAS SECCIONES QUE ESTÁN EN Login.css */
+/*
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-card {
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.login-header {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  padding: 2rem 1rem;
+}
+*/
+
+/* ===== HOME RESPONSIVE ===== */
+/* .home-navbar {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+} */
+
+/* ... resto de tus estilos para Home ... */
