@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
-
 const Login = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -12,10 +11,10 @@ const Login = ({ onLogin }) => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!email) {
-      newErrors.email = 'El email es requerido';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Por favor, ingresa un email válido';
+    if (!username) {
+      newErrors.username = 'El usuario es requerido';
+    } else if (username.length < 3) {
+      newErrors.username = 'El usuario debe tener al menos 3 caracteres';
     }
     
     if (!password) {
@@ -28,21 +27,20 @@ const Login = ({ onLogin }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  //cambiar luego a la direccion del endpoint (copiar de la intranet)
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
       setIsLoading(true);
       
-      // Simulación de llamada API
       setTimeout(() => {
-        // login exitoso par probar
-        if (email === 'admin@sgs.com' && password === '123456') {
-          onLogin(true, email);
+        if (username === 'admin' && password === '123456') {
+          onLogin(true, username);
           navigate('/home');
         } else {
           setErrors({ 
-            submit: 'Credenciales incorrectas. Usa: admin@sgs.com / 123456' 
+            submit: 'Credenciales incorrectas. Usa: admin / 123456' 
           });
         }
         setIsLoading(false);
@@ -65,7 +63,7 @@ const Login = ({ onLogin }) => {
       <div className="login-row">
         <div className="login-card-wrapper">
           <div className="card login-card">
-            {/* Header */}
+            {/* cabecera */}
             <div className="card-header login-header text-white">
               <h2 className="login-heading-responsive mb-2">
                 <i className="bi bi-shield-lock me-2"></i>
@@ -78,39 +76,41 @@ const Login = ({ onLogin }) => {
             <div className="card-body login-body">
               <form onSubmit={handleSubmit} className="login-form" noValidate>
                 
-                 {errors.submit && (
+                {errors.submit && (
                   <div className="alert alert-danger d-flex align-items-center" role="alert">
                     <i className="bi bi-exclamation-triangle me-2"></i>
                     <small>{errors.submit}</small>
                   </div>
                 )}
 
-                 <div className="mb-4">
-                  <label htmlFor="email" className="form-label">
-                    <i className="bi bi-envelope me-2"></i>Correo Electrónico
+                {/* Usuario */}
+                <div className="mb-4">
+                  <label htmlFor="username" className="form-label">
+                    <i className="bi bi-person me-2"></i>Usuario
                   </label>
                   <input
-                    type="email"
-                    className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                    id="email"
-                    value={email}
+                    type="text"
+                    className={`form-control ${errors.username ? 'is-invalid' : ''}`}
+                    id="username"
+                    value={username}
                     onChange={(e) => {
-                      setEmail(e.target.value);
-                      clearError('email');
+                      setUsername(e.target.value);
+                      clearError('username');
                     }}
-                    placeholder="tu@empresa.com"
+                    placeholder="Ingresa tu usuario"
                     disabled={isLoading}
                     required
                   />
-                  {errors.email && (
+                  {errors.username && (
                     <div className="invalid-feedback d-flex align-items-center">
                       <i className="bi bi-x-circle me-2"></i>
-                      {errors.email}
+                      {errors.username}
                     </div>
                   )}
                 </div>
 
-                 <div className="mb-4">
+                {/*  Contraseña */}
+                <div className="mb-4">
                   <label htmlFor="password" className="form-label">
                     <i className="bi bi-key me-2"></i>Contraseña
                   </label>
@@ -135,7 +135,7 @@ const Login = ({ onLogin }) => {
                   )}
                 </div>
 
-                {/* Button */}
+                {/* ingresar */}
                 <div className="d-grid mb-4">
                   <button 
                     type="submit" 

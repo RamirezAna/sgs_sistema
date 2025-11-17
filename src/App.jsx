@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './componentes/Login'
 import Home from './componentes/Home'
+import { TemaProvider } from './componentes/Tema/TemaContext'
 import './App.css'
 
 function App() {
   const [isAutenticacion, setIsAutenticacion] = useState(false)
   const [usuario, setUsuario] = useState('')
-
+ 
   useEffect(() => {
     const savedAuth = localStorage.getItem('isAutenticacion')
     const savedUser = localStorage.getItem('usuario')
@@ -35,29 +36,31 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              isAutenticacion ? 
-              <Navigate to="/home" replace /> : 
-              <Login onLogin={hLogin} />
-            } 
-          />
-          <Route 
-            path="/home" 
-            element={
-              isAutenticacion ? 
-              <Home usuario={usuario} onLogout={hLogout} /> : 
-              <Navigate to="/" replace />
-            } 
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
-    </Router>
+    <TemaProvider>
+        <Router>
+          <div className="App">
+            <Routes>
+              <Route 
+                path="/" 
+                element={
+                  isAutenticacion ? 
+                  <Navigate to="/home" replace /> : 
+                  <Login onLogin={hLogin} />
+                } 
+              />
+              <Route 
+                path="/home" 
+                element={
+                  isAutenticacion ? 
+                  <Home usuario={usuario} onLogout={hLogout} /> : 
+                  <Navigate to="/" replace />
+                } 
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
+        </Router>
+    </TemaProvider>
   )
 }
 
