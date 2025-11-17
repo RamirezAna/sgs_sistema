@@ -591,24 +591,23 @@
 }
 
 /* Estilos que necesitan override */
-.dark-mode .home-navbar {
+/* .dark-mode .home-navbar {
   background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
-}
+} */
 
-.dark-mode .quick-action-card.new-sale:hover {
+/* .dark-mode .quick-action-card.new-sale:hover {
   background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a3a1a 100%);
 }
 
 .dark-mode .quick-action-card.new-purchase:hover {
   background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a2a3a 100%);
-}
+} */
 
-/* Icon colors remain the same in dark mode */
-.module-card.inventory .module-icon,
-.quick-action-card.new-sale .action-icon {
   /* Los colores de iconos se mantienen igual */
+/* .module-card.inventory .module-icon,
+.quick-action-card.new-sale .action-icon {
   color: inherit;
-}
+} */
 
 /* Toggle button styles */
 .theme-toggle {
