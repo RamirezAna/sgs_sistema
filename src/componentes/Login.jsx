@@ -1,11 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SpinnerLogo from './Configuracion/SpinnerLogo';
+import MensajeValidacion from './Mensajes/MensajeValidacion';
+import { InicioSesionAPI } from './PeticionesAPI/peticionesAPI';
+import Layout from 'antd/es/layout/layout';
 import './Login.css';
+import { limpiardatos } from './Configuracion/LimpiarDatos';
+
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [procesando, setProcesando] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -33,20 +40,51 @@ const Login = ({ onLogin }) => {
     
     if (validateForm()) {
       setIsLoading(true);
-      
-      setTimeout(() => {
-        if (username === 'admin' && password === '123456') {
-          onLogin(true, username);
-          navigate('/home');
-        } else {
-          setErrors({ 
-            submit: 'Credenciales incorrectas. Usa: admin / 123456' 
-          });
+        try {
+          setProcesando(true);
+            const { token, refresh, sesion, user, last_login } = await InicioSesionAPI(username, password);
+        
+            const userData = {
+              token,
+              refreshToken: refresh,
+              sesion,
+              user,
+              last_login,
+            };
+        
+            localStorage.setItem('userData', JSON.stringify(userData));
+         
+            navigate('/Home'); 
+             } catch (error) {
+            console.error('Error aqui:', error);
+             setProcesando(false);
+
+            if (error.message) {
+              const errorMessage = error.message.split(': ')[1];
+              // console.log('Mensaje de error:', errorMessage);
+              if (username=='' && password==''){
+                MensajeValidacion(`Atención: Ingrese Usuario y/o Contraseña`, "warning");
+ 
+              } else if (username=='' &&  password!=''){
+                MensajeValidacion(`Atención: Usuario se encuentra vacía`, "warning");
+              }else if 
+              (password=='' && username!=''){
+                MensajeValidacion(`Atención: Contraseña se encuentra vacía`, "warning");
+              }else{
+                MensajeValidacion(`Atención: Usuario y/o contraseña Incorrectas`, "warning");
+              }
+              limpiardatos();
+              setProcesando(false);
+              await new Promise(resolve => setTimeout(resolve, 2000))
+              navigate('/'); 
+            } else {
+              // console.log('No se pudo obtener el mensaje de error.');
+              setProcesando(false);
+
+            }
+             }
         }
-        setIsLoading(false);
-      }, 1500);
-    }
-  };
+      };
 
   const clearError = (field) => {
     if (errors[field]) {
@@ -59,6 +97,7 @@ const Login = ({ onLogin }) => {
   };
 
   return (
+  <Layout>
     <div className="login-container">
       <div className="login-row">
         <div className="login-card-wrapper">
@@ -162,7 +201,14 @@ const Login = ({ onLogin }) => {
         </div>
       </div>
     </div>
+       {procesando && (
+          // <Spinner label="Iniciando..."></Spinner>
+          <SpinnerLogo loading={procesando} />
+          )}
+  </Layout>
+
   );
+
 };
 
 export default Login;

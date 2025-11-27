@@ -1,0 +1,51 @@
+.oscurecerContenido {
+    position: fixed !important; /*por encima de mi modal*/
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* z-index: 1000; */
+    z-index: 99999 !important; /*por encima de mi modal*/
+
+}
+
+.spinner-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner-logo {
+    width: 80px;  /* Ajusta según el tamaño de tu logo */
+    height: 80px;
+    z-index: 2;
+}
+
+.spinner-border {
+    position: absolute;
+    width: 150px;  /* Más grande que el logo */
+    height: 150px;
+    border: 4px solid transparent;
+    border-top-color: #1890ff;  /* Color del borde (azul de Ant Design) */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1;
+}
+
+.spinner-text {
+    /* margin-top: 18px; */
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
