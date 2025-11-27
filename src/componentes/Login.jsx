@@ -4,8 +4,11 @@ import SpinnerLogo from './Configuracion/SpinnerLogo';
 import MensajeValidacion from './Mensajes/MensajeValidacion';
 import { InicioSesionAPI } from './PeticionesAPI/peticionesAPI';
 import Layout from 'antd/es/layout/layout';
-import './Login.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faLock,faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 import { limpiardatos } from './Configuracion/LimpiarDatos';
+import './Login.css';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -13,6 +16,7 @@ const Login = ({ onLogin }) => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [procesando, setProcesando] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -34,12 +38,11 @@ const Login = ({ onLogin }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  //cambiar luego a la direccion del endpoint (copiar de la intranet)
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
-      setIsLoading(true);
+      // setIsLoading(true);
         try {
           setProcesando(true);
             const { token, refresh, sesion, user, last_login } = await InicioSesionAPI(username, password);
@@ -60,8 +63,7 @@ const Login = ({ onLogin }) => {
              setProcesando(false);
 
             if (error.message) {
-              const errorMessage = error.message.split(': ')[1];
-              // console.log('Mensaje de error:', errorMessage);
+               // console.log('Mensaje de error:', errorMessage);
               if (username=='' && password==''){
                 MensajeValidacion(`Atención: Ingrese Usuario y/o Contraseña`, "warning");
  
@@ -78,9 +80,7 @@ const Login = ({ onLogin }) => {
               await new Promise(resolve => setTimeout(resolve, 2000))
               navigate('/'); 
             } else {
-              // console.log('No se pudo obtener el mensaje de error.');
-              setProcesando(false);
-
+               setProcesando(false);
             }
              }
         }
@@ -94,6 +94,10 @@ const Login = ({ onLogin }) => {
         return newErrors;
       });
     }
+  };
+
+  const ElPasswordVisible = () => {
+    setPasswordVisible(!passwordVisible);
   };
 
   return (
@@ -154,7 +158,8 @@ const Login = ({ onLogin }) => {
                     <i className="bi bi-key me-2"></i>Contraseña
                   </label>
                   <input
-                    type="password"
+                    // type="password"
+                    type={passwordVisible ? 'text' : 'password'}
                     className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                     id="password"
                     value={password}
@@ -166,6 +171,9 @@ const Login = ({ onLogin }) => {
                     disabled={isLoading}
                     required
                   />
+                   <span className="show-password-icon" onClick={ElPasswordVisible}>
+                    <FontAwesomeIcon icon={passwordVisible ? faEye : faEyeSlash} className="eye-icon" />
+                  </span>
                   {errors.password && (
                     <div className="invalid-feedback d-flex align-items-center">
                       <i className="bi bi-x-circle me-2"></i>

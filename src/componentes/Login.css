@@ -227,6 +227,18 @@
   line-height: 1.5;
 }
 
+.show-password-icon {
+  position: absolute;
+  right: 10px;
+  top: 67%;
+  transform: translateY(-30%);
+  cursor: pointer;
+  left: 335px;
+  color: #e2e8f0;
+    margin-right: 30px;  
+
+}
+
 /* RESPONSIVE*/
 /* Tablet */
 @media (max-width: 1024px) {
