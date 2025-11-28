@@ -226,6 +226,10 @@
   color: #5a6c7d;
   line-height: 1.5;
 }
+ 
+.eye-icon {
+   margin-right: 30px;  
+}
 
 .show-password-icon {
   position: absolute;

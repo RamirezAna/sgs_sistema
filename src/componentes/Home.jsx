@@ -1,25 +1,55 @@
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import { useTheme } from './Tema/TemaContext';
+import { limpiardatos } from './Configuracion/LimpiarDatos';
 
 const Home = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
 
+  const userData = user || JSON.parse(localStorage.getItem('userData'))?.user || 'Administrador';
+
   const hLogout = () => {
-    onLogout();
+    limpiardatos();
+
+    if (onLogout) {
+      onLogout();
+    }
+    
+    // ir a inicio
     navigate('/');
   };
 
-  const irModuloClick = (module) => {
-    console.log(`Navegando al módulo: ${module}`);
-    // agrear la direccion
+  const irModuloClick = (module) => {   
+    // navegar a distintos modulos
+    switch(module) {
+      case 'inventario':
+        navigate('/inventario');
+        break;
+      case 'ventas':
+        navigate('/ventas');
+        break;
+      case 'compras':
+        navigate('/compras');
+        break;
+      case 'contabilidad':
+        navigate('/contabilidad');
+        break;
+      case 'reportes':
+        navigate('/reportes');
+        break;
+      case 'configuracion':
+        navigate('/configuracion');
+        break;
+      default:
+        console.log('modulo no existe:', module);
+    }
   };
 
   return (
-    <div className="home-container">
+    <div className={`home-container ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* Navbar */}
-         <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow home-navbar">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow home-navbar">
         <div className="container">
           <span className="navbar-brand">
             <i className="bi bi-grid-3x3-gap me-2"></i>
@@ -35,8 +65,7 @@ const Home = ({ user, onLogout }) => {
             >
               <i className={`bi ${isDarkMode ? 'bi-sun' : 'bi-moon'}`}></i>
               <span className="ms-1 d-none d-sm-inline">
-                {/* {isDarkMode ? 'Claro' : 'Oscuro'} */}
-                {isDarkMode}
+                {isDarkMode ? 'Claro' : 'Oscuro'}
               </span>
             </button>
             
@@ -48,9 +77,9 @@ const Home = ({ user, onLogout }) => {
                 style={{ textDecoration: 'none' }}
               >
                 <i className="bi bi-person-circle me-1"></i>
-                {user || 'Administrador'}
+                {typeof userData === 'object' ? userData.username || userData.nombre : userData}
               </button>
-              <ul className="dropdown-menu">
+              <ul className="dropdown-menu dropdown-menu-end">
                 <li>
                   <button className="dropdown-item" onClick={hLogout}>
                     <i className="bi bi-box-arrow-right me-2"></i>
@@ -63,20 +92,30 @@ const Home = ({ user, onLogout }) => {
         </div>
       </nav>
 
-      {/* principal */}
+      {/* Contenido principal */}
       <div className="container mt-4 mt-md-5">
         <div className="row">
           <div className="col-12">
             <div className="card shadow-sm home-main-card">
               <div className="card-body home-card-body responsive-padding">
-                {/* acciones rapidas*/}
-                <div className="quick-actions-section">
+                
+                {/* Bienvenida */}
+                <div className="welcome-section mb-4">
+                  <h4 className="responsive-text text-primary">
+                    <i className="bi bi-house-door me-2"></i>
+                    Bienvenido, {typeof userData === 'object' ? userData.username || userData.nombre : userData}
+                  </h4>
+                  <p className="text-muted">Sistema de Gestión Stock - Panel Principal</p>
+                </div>
+
+                {/* Acciones rápidas */}
+                <div className="quick-actions-section mb-5">
                   <h5 className="responsive-text">
                     <i className="bi bi-lightning me-2"></i>
                     Acciones Rápidas
                   </h5>
                   <div className="quick-actions-grid">
-                    <button className="quick-action-card new-sale">
+                    <button className="quick-action-card new-sale" onClick={() => irModuloClick('ventas')}>
                       <div className="action-icon">
                         <i className="bi bi-plus-circle"></i>
                       </div>
@@ -84,7 +123,7 @@ const Home = ({ user, onLogout }) => {
                       <div className="action-subtitle">Registrar venta</div>
                     </button>
                     
-                    <button className="quick-action-card new-purchase">
+                    <button className="quick-action-card new-purchase" onClick={() => irModuloClick('compras')}>
                       <div className="action-icon">
                         <i className="bi bi-cart-plus"></i>
                       </div>
@@ -92,7 +131,7 @@ const Home = ({ user, onLogout }) => {
                       <div className="action-subtitle">Ingresar compra</div>
                     </button>
                     
-                    <button className="quick-action-card view-reports">
+                    <button className="quick-action-card view-reports" onClick={() => irModuloClick('reportes')}>
                       <div className="action-icon">
                         <i className="bi bi-clipboard-data"></i>
                       </div>
@@ -100,7 +139,7 @@ const Home = ({ user, onLogout }) => {
                       <div className="action-subtitle">Estadísticas</div>
                     </button>
                     
-                    <button className="quick-action-card quick-inventory">
+                    <button className="quick-action-card quick-inventory" onClick={() => irModuloClick('inventario')}>
                       <div className="action-icon">
                         <i className="bi bi-box-seam"></i>
                       </div>
@@ -110,7 +149,7 @@ const Home = ({ user, onLogout }) => {
                   </div>
                 </div>
 
-                {/* modulo del Sistema */}
+                {/* Módulos del Sistema */}
                 <div className="quick-actions-sectionModulo">
                   <h5 className="responsive-text">
                     <i className="bi bi-grid-3x3-gap me-2"></i>

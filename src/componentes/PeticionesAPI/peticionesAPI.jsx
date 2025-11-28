@@ -14,7 +14,6 @@ async function InicioSesionAPI(username, password) {
       }),
     });
 
-    console.log("response de LoginUsuario => ",response);
 
     if (!response.ok) {
       const errorMessage = await response.text();
