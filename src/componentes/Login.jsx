@@ -22,17 +22,17 @@ const Login = ({ onLogin }) => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!username.trim()) {
-      newErrors.username = 'El usuario es requerido';
-    } else if (username.length < 3) {
-      newErrors.username = 'El usuario debe tener al menos 3 caracteres';
-    }
+    // if (!username.trim()) {
+    //   newErrors.username = 'El usuario es requerido';
+    // } else if (username.length < 3) {
+    //   newErrors.username = 'El usuario debe tener al menos 3 caracteres';
+    // }
     
-    if (!password) {
-      newErrors.password = 'La contraseña es requerida';
-    } else if (password.length < 6) {
-      newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
-    }
+    // if (!password) {
+    //   newErrors.password = 'La contraseña es requerida';
+    // } else if (password.length < 6) {
+    //   newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
+    // }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
