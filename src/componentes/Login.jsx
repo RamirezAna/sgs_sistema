@@ -6,9 +6,9 @@ import Layout from 'antd/es/layout/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLock, faEye, faEyeSlash, faSignInAlt, faShieldAlt, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import VentanaEmergente from './VentanaEmergente';
-import logoAcceso from '../assets/icono.png';
+import Notificacion from './Mensajes/Notificacion';
 import './Login.css';
-
+ 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -38,56 +38,78 @@ const Login = ({ onLogin }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const limpiarDatos = () => {
-    setUsername('');
-    setPassword('');
-    setErrors({});
-  };
+  // const limpiarDatos = () => {
+  //   setUsername('');
+  //   setPassword('');
+  //   setErrors({});
+  // };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (validateForm()) {
-      setIsLoading(true);
+      e.preventDefault();
+      
+       if (!validateForm()) return;
+      
+      // setIsLoading(true);
       setProcesando(true);
       
       try {
         const { token, refresh, sesion, user_name } = await InicioSesionAPI(username, password);
-    
+        
+        // Guardar datos del usuario
         const userData = {
           token,
           refreshToken: refresh,
           sesion,
           user: user_name,
         };
-    
+        
         localStorage.setItem('userData', JSON.stringify(userData));
         
-        // ventana emergente 
+        // ventana emergente
         VentanaEmergente(user_name);
         
-         if (onLogin) {
+        // login exitoso
+        if (onLogin) {
           onLogin(userData);
         }
         
-        // ir 2 segundos para que se vea el mensaje
-        setTimeout(() => {
-          navigate('/home');
-        }, 2000);
+        // Redirigir luego de   2 segundos
+        // setTimeout(() => {
+        //   navigate('/home');
+        // }, 2000);
         
       } catch (error) {
-        console.error('Error en login:', error);
+         
+         if (error.message) {
+          let errorMessage;
+          setProcesando(false);
+
+          // Validaciones
+          if (!username.trim() && !password.trim()) {
+            errorMessage = 'Atención: Ingrese Usuario y/o Contraseña';
+          } else if (!username.trim()) {
+            errorMessage = 'Atención: Usuario se encuentra vacía';
+          } else if (!password.trim()) {
+            errorMessage = 'Atención: Contraseña se encuentra vacía';
+          } else {
+            errorMessage = 'Atención: Usuario y/o contraseña Incorrectas';
+          }
+          
+           Notificacion.warning(errorMessage);
+          
+           await new Promise(resolve => setTimeout(resolve, 2000));
+          
+        } else {
+           Notificacion.warning('Error en el proceso de autenticación');
+        }
         
-        // error desde el componente separado
-        showLoginError('Usuario y/o contraseña incorrectos');
+         navigate('/');
         
-        limpiarDatos();
       } finally {
-        setIsLoading(false);
+        //  setIsLoading(false);
         setProcesando(false);
       }
-    }
-  };
+    };
 
   const clearError = (field) => {
     if (errors[field]) {
@@ -124,8 +146,8 @@ const Login = ({ onLogin }) => {
                    {/* <img src={logoAcceso} alt="Logo" className="logo" />
                   </div>     */}
                    <h2 className="login-heading-responsive mb-2">
-                  Acceso al Sistema
-                </h2>  
+                      Acceso al Sistema
+                  </h2>  
                 <small className="login-subtitle">Sistema de Gestión Stock</small>
               </div>
               
