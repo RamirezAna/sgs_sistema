@@ -1,27 +1,26 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import { useTheme } from './Tema/TemaContext';
 import { limpiardatos } from './Configuracion/LimpiarDatos';
-
+import ConfiguracionMenu from './ConfiguracionMenu/ConfiguracionMenu';
+ 
 const Home = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
+  const [showConfigMenu, setShowConfigMenu] = useState(false);
 
   const userData = user || JSON.parse(localStorage.getItem('userData'))?.user || 'Administrador';
 
   const hLogout = () => {
     limpiardatos();
-
     if (onLogout) {
       onLogout();
     }
-    
-    // ir a inicio
     navigate('/');
   };
 
   const irModuloClick = (module) => {   
-    // navegar a distintos modulos
     switch(module) {
       case 'inventario':
         navigate('/inventario');
@@ -39,15 +38,24 @@ const Home = ({ user, onLogout }) => {
         navigate('/reportes');
         break;
       case 'configuracion':
-        navigate('/configuracion');
+        setShowConfigMenu(true); // configuracionMenu mostrad
         break;
       default:
-        console.log('modulo no existe:', module);
+        console.log('módulo no existe:', module);
     }
+  };
+
+  const closeConfigMenu = () => {
+    setShowConfigMenu(false);
   };
 
   return (
     <div className={`home-container ${isDarkMode ? 'dark-mode' : ''}`}>
+      {/*menu de configuracion*/}
+      {showConfigMenu && (
+        <ConfiguracionMenu onClose={closeConfigMenu} isDarkMode={isDarkMode} />
+      )}
+
       {/* Navbar */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow home-navbar">
         <div className="container">
@@ -108,7 +116,7 @@ const Home = ({ user, onLogout }) => {
                   <p className="text-muted">Sistema de Gestión Stock - Panel Principal</p>
                 </div>
 
-                {/* Acciones rápidas */}
+                {/* Acciones rapidas */}
                 <div className="quick-actions-section mb-5">
                   <h5 className="responsive-text">
                     <i className="bi bi-lightning me-2"></i>
@@ -149,7 +157,7 @@ const Home = ({ user, onLogout }) => {
                   </div>
                 </div>
 
-                {/* Módulos del Sistema */}
+                {/* modulos del Sistema */}
                 <div className="quick-actions-sectionModulo">
                   <h5 className="responsive-text">
                     <i className="bi bi-grid-3x3-gap me-2"></i>
