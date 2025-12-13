@@ -4,7 +4,7 @@ import SpinnerLogo from './Configuracion/SpinnerLogo';
 import { InicioSesionAPI } from './PeticionesAPI/peticionesAPI';
 import Layout from 'antd/es/layout/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faLock, faEye, faEyeSlash, faSignInAlt, faShieldAlt, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faLock, faEye, faEyeSlash, faSignInAlt, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import VentanaEmergente from './VentanaEmergente';
 import Notificacion from './Mensajes/Notificacion';
 import './Login.css';
@@ -21,35 +21,15 @@ const Login = ({ onLogin }) => {
 
   const validateForm = () => {
     const newErrors = {};
-    
-    // if (!username.trim()) {
-    //   newErrors.username = 'El usuario es requerido';
-    // } else if (username.length < 3) {
-    //   newErrors.username = 'El usuario debe tener al menos 3 caracteres';
-    // }
-    
-    // if (!password) {
-    //   newErrors.password = 'La contraseña es requerida';
-    // } else if (password.length < 6) {
-    //   newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
-    // }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // const limpiarDatos = () => {
-  //   setUsername('');
-  //   setPassword('');
-  //   setErrors({});
-  // };
-
   const handleSubmit = async (e) => {
       e.preventDefault();
       
-       if (!validateForm()) return;
+      if (!validateForm()) return;
       
-      // setIsLoading(true);
       setProcesando(true);
       
       try {
@@ -73,40 +53,50 @@ const Login = ({ onLogin }) => {
           onLogin(userData);
         }
         
-        // Redirigir luego de   2 segundos
-        // setTimeout(() => {
-        //   navigate('/home');
-        // }, 2000);
-        
       } catch (error) {
          
-         if (error.message) {
+        if (error) {
           let errorMessage;
           setProcesando(false);
 
-          // Validaciones
+          console.log("error.message ==> ", error);
+
+          // Verificar si es error de contraseña activacion
+          if (error.includes('activacion') || error.status === 403 || error.includes('activar')) {
+            Notificacion.warning('Su usuario requiere activación. Será redirigido para configurar su contraseña.');
+            
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Redirigir a la pagina de activacion con el nombre de usuario
+            navigate('/activacion-usuario', { state: { usuario: username } });
+            return;
+          }
+
+          // Validaciones normales
           if (!username.trim() && !password.trim()) {
             errorMessage = 'Atención: Ingrese Usuario y/o Contraseña';
+            Notificacion.warning(errorMessage);
           } else if (!username.trim()) {
             errorMessage = 'Atención: Usuario se encuentra vacía';
+            Notificacion.warning(errorMessage);
           } else if (!password.trim()) {
             errorMessage = 'Atención: Contraseña se encuentra vacía';
-          } else {
-            errorMessage = 'Atención: Usuario y/o contraseña Incorrectas';
+            Notificacion.warning(errorMessage);
           }
+          //  else {
+          //   errorMessage = 'Atención: Usuario y/o contraseña Incorrectas';
+          // }
           
-           Notificacion.warning(errorMessage);
           
-           await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
           
         } else {
-           Notificacion.warning('Error en el proceso de autenticación');
+          Notificacion.warning('Error en el proceso de autenticación');
         }
         
-         navigate('/');
+        navigate('/');
         
       } finally {
-        //  setIsLoading(false);
         setProcesando(false);
       }
     };
@@ -133,6 +123,10 @@ const Login = ({ onLogin }) => {
     setIsFocused(prev => ({ ...prev, [field]: false }));
   };
 
+  const handleActivarUsuario = () => {
+    navigate('/activacion-usuario', { state: { usuario: username } });
+  };
+
   return (
     <Layout>
       <div className="login-container">
@@ -141,19 +135,15 @@ const Login = ({ onLogin }) => {
             <div className="card login-card">
               {/* Cabecera */}
               <div className="card-header login-header text-white">
-                {/* <div className="login-header-icon">  
-                  {/* <FontAwesomeIcon icon={faShieldAlt} /> */}
-                   {/* <img src={logoAcceso} alt="Logo" className="logo" />
-                  </div>     */}
-                   <h2 className="login-heading-responsive mb-2">
-                      Acceso al Sistema
-                  </h2>  
+                <h2 className="login-heading-responsive mb-2">
+                  Acceso al Sistema
+                </h2>  
                 <small className="login-subtitle">Sistema de Gestión Stock</small>
               </div>
               
               {/* Body */}
               <div className="card-body login-body">
-                <form onSubmit={handleSubmit} className="login-form" noValidate>
+                <div className="login-form">
                   
                   {errors.submit && (
                     <div className="alert alert-danger d-flex align-items-center login-alert" role="alert">
@@ -182,7 +172,6 @@ const Login = ({ onLogin }) => {
                         onBlur={() => handleBlur('username')}
                         placeholder=" "
                         disabled={isLoading}
-                        required
                       />
                       {!username && !isFocused.username && (
                         <div className="login-input-placeholder">
@@ -218,7 +207,6 @@ const Login = ({ onLogin }) => {
                         onBlur={() => handleBlur('password')}
                         placeholder=" "
                         disabled={isLoading}
-                        required
                       />
                       {!password && !isFocused.password && (
                         <div className="login-input-placeholder">
@@ -247,10 +235,11 @@ const Login = ({ onLogin }) => {
                   </div>
 
                   {/* Boton de ingreso */}
-                  <div className="d-grid mb-4">
+                  <div className="d-grid mb-3">
                     <button 
-                      type="submit" 
+                      type="button"
                       className="btn login-btn text-white"
+                      onClick={handleSubmit}
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -266,7 +255,20 @@ const Login = ({ onLogin }) => {
                       )}
                     </button>
                   </div>
-                </form>
+
+                  {/* Enlace para activar usuario */}
+                  <div className="text-center">
+                    <button 
+                      type="button"
+                      className="btn btn-link text-decoration-none"
+                      onClick={handleActivarUsuario}
+                      disabled={isLoading}
+                      style={{ fontSize: '0.9rem' }}
+                    >
+                      ¿Tienes una contraseña temporal? Activa tu usuario aquí
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -11,8 +11,8 @@ export const peticiongeneral = async (endpoint, metodo, bodyoptions,navigate) =>
 
   const { token, sesion } = DatosStorage('obtener');
   // bodyoptions.SESION=sesion;
-   
-  if (sesion !== null ) {
+
+  //if (sesion !== null ) {
     let requestOptions = {};
 
     if (metodo.toUpperCase() === 'GET') {
@@ -32,7 +32,7 @@ export const peticiongeneral = async (endpoint, metodo, bodyoptions,navigate) =>
           'Content-Type': 'application/json',
           //'SESION': sesion,
           // 'user': user,
-          'Authorization': `Bearer ${token}`,
+         // 'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(bodyoptions),
       };
@@ -40,16 +40,16 @@ export const peticiongeneral = async (endpoint, metodo, bodyoptions,navigate) =>
 
     const response = await fetch(`${BASE_URL}/${endpoint}`, requestOptions);
     
-    data = await response.json();
+     data = await response.json();
     resp = response.status;
     message = response.message; 
 
     datos = { data, resp, message};
-  } else {
-    data = {};
-    datos = 0;
-    datos = { data, resp,message };
-  }
+  // } else {
+  //   data = {};
+  //   datos = 0;
+  //   datos = { data, resp,message };
+  // }
 
   return datos;
 };

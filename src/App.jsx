@@ -4,6 +4,7 @@ import Login from './componentes/Login'
 import Home from './componentes/Home'
 import { TemaProvider } from './componentes/Tema/TemaContext'
 import './App.css'
+import ActivacionUsuario from './componentes/ActivacionUsuario'
 
 function App() {
   const [isAutenticacion, setIsAutenticacion] = useState(false)
@@ -56,7 +57,9 @@ function App() {
                   <Navigate to="/" replace />
                 } 
               />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} /> 
+              <Route path="/activacion-usuario" element={<ActivacionUsuario />} />
+
             </Routes>
           </div>
         </Router>
